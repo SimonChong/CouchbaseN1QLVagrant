@@ -42,8 +42,7 @@ exec {"couchbase-n1ql-server-extract":
   command => "tar xvzf $couchN1QLFilename -C /vagrant/couch/N1QL",
   cwd => "/vagrant/couch",   
   creates => "/vagrant/couch/N1QL/start_tutorial.sh",
-  path    => ["/usr/bin", "/usr/sbin", "/bin"],
-  before => Exec['couchbase-n1ql-server-start']
+  path    => ["/usr/bin", "/usr/sbin", "/bin"]
 }
 
 # Update the System
@@ -72,11 +71,11 @@ service { "couchbase-server":
 }
 
 # Start N1QL
-exec {"couchbase-n1ql-server-start": 
-  command => "/vagrant/couch/N1QL/start_tutorial.sh &",
-  cwd => "/vagrant/couch/N1QL",
-  require => Exec["couchbase-n1ql-server-extract"]
-}
+#exec {"couchbase-n1ql-server-start": 
+#  command => "/vagrant/couch/N1QL/start_tutorial.sh &",
+#  cwd => "/vagrant/couch/N1QL",
+#  require => Exec["couchbase-n1ql-server-extract"]
+#}
 
 
 
