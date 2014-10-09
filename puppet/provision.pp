@@ -10,6 +10,10 @@ $couchPackage = "http://packages.couchbase.com/releases/3.0.0/couchbase-server-c
 $splitter1 = split($couchPackage, '/')
 $couchFilename = $splitter1[-1]
 
+$libSSL = "http://security.ubuntu.com/ubuntu/pool/universe/o/openssl098/libssl0.9.8_0.9.8o-7ubuntu3.2_amd64.deb"
+$splitter2 = split($libSSL, '/')
+$libSSLFilename = $splitter2[-1]
+
 # Create a directory      
 file { "/vagrant/couch":
   ensure => "directory",
@@ -21,14 +25,25 @@ exec { "couchbase-server-source":
   command => "/usr/bin/wget $couchPackage",
   cwd => "/vagrant/couch",   
   creates => "/vagrant/couch/$couchFilename",
-  before => Package['couchbase-server']
+  before => Package['couchbase-server'],
+  timeout => 0
 }
 
 # Download Couchbase N1QL
 exec { "couchbase-n1ql-server-source":
   command => "/usr/bin/wget $couchN1QLPackage",
   cwd => "/vagrant/couch",
-  creates => "/vagrant/couch/$couchN1QLFilename"
+  creates => "/vagrant/couch/$couchN1QLFilename",
+  timeout => 0
+}
+
+# Download Couchbase N1QL
+exec { "libssl":
+  command => "/usr/bin/wget $libSSL",
+  cwd => "/vagrant/couch",
+  creates => "/vagrant/couch/$libSSLFilename",
+  before => Package['libssl-install'],
+  timeout => 0
 }
 
 # Create a directory      
@@ -51,9 +66,10 @@ exec {
 }
 
 # Install libssl dependency
-package { "libssl0.9.8":
-  name => "libssl0.9.8",
-  ensure => present,
+package { "libssl-install":
+  provider => dpkg,
+  ensure => installed,
+  source => "/vagrant/couch/$libSSLFilename",
   before => Package["couchbase-server"]
 }
 
