@@ -13,14 +13,14 @@ $couchFilename = $splitter1[-1]
 # Create a directory      
 file { "/vagrant/couch":
   ensure => "directory",
-  before => Exec["couchbase-server-source",couchbase-n1ql-server-source"]
+  before => Exec["couchbase-server-source","couchbase-n1ql-server-source"]
 }
 
 # Download Couchbase
 exec { "couchbase-server-source": 
   command => "/usr/bin/wget $couchPackage",
   cwd => "/vagrant/couch",   
-  creates => "/vagrant/couch$couchFilename",
+  creates => "/vagrant/couch/$couchFilename",
   before => Package['couchbase-server']
 }
 
@@ -28,7 +28,7 @@ exec { "couchbase-server-source":
 exec { "couchbase-n1ql-server-source":
   command => "/usr/bin/wget $couchN1QLPackage",
   cwd => "/vagrant/couch",
-  creates => "/vagrant/couch$couchN1QLFilename"
+  creates => "/vagrant/couch/$couchN1QLFilename"
 }
 
 # Create a directory      
@@ -39,7 +39,7 @@ file { "/vagrant/couch/N1QL":
 
 # Extract N1QL
 exec {"couchbase-n1ql-server-extract": 
-  command => "tar xvzf $couchN1QLFilename -C /vagrant/couchN1QL",
+  command => "tar xvzf $couchN1QLFilename -C /vagrant/couch/N1QL",
   cwd => "/vagrant/couch",   
   creates => "/vagrant/couch/N1QL/start_tutorial.sh",
   path    => ["/usr/bin", "/usr/sbin", "/bin"],
@@ -62,7 +62,7 @@ package { "libssl0.9.8":
 package { "couchbase-server":
   provider => dpkg,
   ensure => installed,
-  source => "/vagrant/couch$couchFilename",
+  source => "/vagrant/couch/$couchFilename",
 }
 
 # Ensure the service is running
