@@ -88,7 +88,7 @@ service { "couchbase-server":
 
 # Start N1QL
 exec {"couchbase-n1ql-server-start": 
-  command => "/vagrant/couch/N1QL/start_tutorial.sh &",
+  command => "/vagrant/couch/N1QL/cbq-engine -couchbase http://localhost:8091/ &",
   cwd => "/vagrant/couch/N1QL",
   require => Exec["couchbase-n1ql-server-extract"]
 }
